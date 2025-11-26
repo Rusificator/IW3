@@ -160,7 +160,9 @@ class School {
             return;
         }
         System.out.println("\nСписок учеников:");
-        st.forEach(System.out::println);
+        for (St s : st) {
+            System.out.println(s);
+        }
     }
 }
 
