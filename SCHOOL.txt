@@ -1,0 +1,266 @@
+Индивидуальные задачи 3
+Will GroundNovember 26, 2025
+7. Описать класс "Школа, ученики". Предусмотреть возможность работы с произвольным числом учеников, поиска ученика по заданному классу и фамилии, добавления учеников в школу, удаления из неё, сортировки учеников по разным полям. Написать программу, демонстрирующую работу с этим классом.
+
+
+
+Код класса Student:
+
+import java.util.*;
+
+class St {
+    private String fio;
+    private String grade; // Класс
+    private String addr;
+    private int[] marks;
+
+     St(String fio, String grade, String addr, int[] marks)
+     {
+        this.fio = fio;
+        this.grade = grade;
+        this.addr = addr;
+        this.marks = marks;
+    }
+
+     double getAverage()
+    {
+        if (marks.length == 0) return 0;
+        double sum = 0;
+        for (int mark : marks)
+        {
+            sum += mark;
+        }
+        return sum / marks.length;
+    }
+
+
+     String getFio()
+     {
+         return fio;
+     }
+     String getGrade()
+     {
+         return grade;
+     }
+     String getAddress()
+     {
+         return addr;
+     }
+     int[] getMarks()
+     {
+         return marks;
+     }
+
+
+    public String toString()
+    {
+        return "\nУченик: "+fio +"\nКласс:"+grade+"\nАдрес:"+ addr +"\nОценки:"+Arrays.toString(marks) +"\nСредний балл:"+getAverage();
+
+    }
+
+
+    public static  Comparator <St> FioComparator=new Comparator<St>()
+    {
+
+        public int compare(St p1, St p2)
+        {
+            return p1.fio.compareToIgnoreCase(p2.fio);
+        }
+    };
+
+
+        public static  Comparator <St> GradeComparator=new Comparator<St>()
+        {
+        public int compare(St p1, St p2)
+        {
+            int gradeCompare = p1.grade.compareToIgnoreCase(p2.grade);
+            if (gradeCompare != 0) return gradeCompare;
+            return p1.fio.compareToIgnoreCase(p2.fio);
+        }
+    };
+    public static  Comparator <St> AverageComparator=new Comparator<St>()
+    {
+        public int compare(St p1, St p2)
+        {
+            return Double.compare(p2.getAverage(), p1.getAverage()); // По убыванию
+        }
+    };
+
+}
+
+
+Код класса School:
+
+import java.util.*;
+class School {
+    private List<St> st = new ArrayList<>();
+
+
+    public void add(St s)
+    {
+        st.add(s);
+        System.out.println("Добавлен: " + s.getFio());
+    }
+
+
+    public void del(String fio) {
+        int p=-1;
+        for(int i=0;i<st.size();i++)
+            if(fio.equalsIgnoreCase(st.get(i).getFio())) p=i;
+        if(p>-1)
+        {
+            st.remove(p);
+            System.out.println("Удалили ученика: "+fio);
+        }
+        else System.out.println("Такого ученика нет");
+    }
+
+
+
+
+
+
+
+
+    // Поиск по классу и фамилии
+    public void find(String grade, String fio)
+    {
+        boolean f = false;
+        for (St p : st) {
+            if (p.getGrade().equalsIgnoreCase(grade) &&
+                    p.getFio().toLowerCase().contains(fio.toLowerCase()))
+            {
+                System.out.println("Найден: " + p);
+                f = true;
+            }
+        }
+        if (!f) System.out.println("Ученик не найден");
+    }
+
+
+    public void sortByFio() {
+        st.sort(St.FioComparator);
+    }
+
+    public void sortByGrade() {
+        st.sort(St.GradeComparator);
+    }
+
+    public void sortByAverage()
+    {
+        st.sort(St.AverageComparator);
+    }
+
+
+    public void printAll()
+    {
+        if (st.isEmpty())
+        {
+            System.out.println("В школе нет учеников");
+            return;
+        }
+        System.out.println("\nСписок учеников:");
+        st.forEach(System.out::println);
+    }
+}
+
+
+Код класса Main:
+
+import java.util.*;
+
+/*7. Описать класс "Школа, ученики".
+Предусмотреть возможность работы с произвольным числом учеников, поиска ученика по заданному классу и фамилии,
+добавления учеников в школу, удаления из неё, сортировки учеников по разным полям.
+Написать программу, демонстрирующую работу с этим классом.
+*/
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Scanner scL = new Scanner(System.in);
+        School school = new School();
+
+
+        school.add(new St("Александров Петр", "7A", "ул. Крайняя 11", new int[]{5, 4, 5}));
+        school.add(new St("Токарева Мария", "6B", "ул. Мира 5", new int[]{4, 5, 4}));
+        school.add(new St("Попов Валерий", "8A", "ул. Школьная 3", new int[]{3, 4, 5}));
+
+        while (true)
+        {
+            System.out.println("\n1. Добавить ученика");
+            System.out.println("2. Удалить ученика");
+            System.out.println("3. Найти ученика");
+            System.out.println("4. Сортировать по ФИО");
+            System.out.println("5. Сортировать по классу");
+            System.out.println("6. Сортировать по среднему баллу");
+            System.out.println("7. Показать всех");
+            System.out.println("8. Выход");
+            System.out.print("Выберите действие: ");
+
+            int c = sc.nextInt();
+
+
+
+                if (c==1) {
+                    System.out.print("ФИО: ");
+                    String fio = scL.nextLine();
+                    System.out.print("Класс: ");
+                    String grade = scL.nextLine();
+                    System.out.print("Адрес: ");
+                    String addr = scL.nextLine();
+                    System.out.print("количетсво оценок: ");
+                    int k = sc.nextInt();
+                    int[] marks = new int[k];
+                    System.out.println("Введите оценки "+k+" раз:");
+                    for (int i = 0; i < marks.length; i++)
+                    {
+                        int o=sc.nextInt();
+                        marks[i] = o;
+                    }
+                    school.add(new St(fio, grade, addr, marks));
+                }
+            if (c==2)
+            {
+                System.out.print("ФИО для удаления: ");
+                school.del(scL.nextLine());
+            }
+            if (c==3)
+            {
+                System.out.print("Класс: ");
+                String grade = scL.nextLine();
+                System.out.print("Фамилия: ");
+                String fio = scL.nextLine();
+                school.find(grade, fio);
+            }
+            if (c==4)
+            {
+                school.sortByFio();
+                System.out.println("Отсортировано по ФИО");
+            }
+            if (c==5)
+            {
+                school.sortByGrade();
+                System.out.println("Отсортировано по классу");
+            }
+            if (c==6)
+            {
+                school.sortByAverage();
+                System.out.println("Отсортировано по среднему баллу");
+            }
+            if (c==7) school.printAll();
+            if (c==8)
+            {
+                System.out.println("Выход");
+                return;
+            }
+            if (c>8||c<1) System.out.println("Неверный выбор");
+
+        }
+
+    }
+}
+
+
+
+Edit
+Will
